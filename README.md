@@ -13,6 +13,7 @@ pip install mqtthandler
 ```py
 import mqtthandler
 import logging
+import time
 
 mqtthdlr = mqtthandler.MQTTHandler('server.mqtt.com', 'topic/test')
 mqtthdlr.setLevel(logging.INFO)
@@ -21,22 +22,31 @@ logger = logging.getLogger()
 logger.addHandler(mqtthdlr)
 logger.setLevel(logging.INFO)
 
-logging.info('test')  # Automatically connect to the MQTT server and send log message to MQTT topic
+logging.info('test')  # Automatically connecting to the MQTT broker if not connected (equal to loop_start()) and sending log message to MQTT broker
+logging.info('test 2')
+
+# Wait for log being sent to the MQTT broker
+while True:
+  time.sleep(1)
+
+# You will only see
+#   test 2
+# on the broker if QoS = 0.
 ```
 
 MQTTHandler will not wait for connected, you have to do it yourself.
 E.g.
 
 ```py
-mqtthdlr.initiate()   # Manually connect to the MQTT server
+mqtthdlr.loop_start()   # Manually connect to the MQTT server
 import time; time.sleep(3)   # A dirty way to wait for MQTT connected
-logging.info('test')  # send log message to MQTT topic
+logging.info('test')  # send log message to MQTT broker
 ```
 
-MQTTHandler will create a thread to maintain the connection (automatically reconnecting if disconnected) itself. This will make your program never exit. You have to terminate MQTTHandler yourself to destroy the MQTTHandler thread.
+MQTTHandler will create a thread to maintain the connection (automatically reconnecting if disconnected) itself. This will make your program never exit. You have to terminate MQTTHandler yourself to stop the MQTTHandler thread.
 
 ```py
-mqtthdlr.terminate()  # Destroy the MQTT connection
+mqtthdlr.loop_stop()  # Stop MQTT thread
 ```
 
 ## API
@@ -54,14 +64,11 @@ Reference to [paho.mqtt.python](https://github.com/eclipse/paho.mqtt.python/blob
 #### Methods
 
 ```
-initiate()
+loop_start()
 ```
 ```
-terminate()
+loop_stop()
 ```
-
-Start/stop the handler.
-
 ```
 max_inflight_messages_set(inflight)
 ```

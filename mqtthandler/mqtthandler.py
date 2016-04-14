@@ -57,28 +57,27 @@ class MQTTHandler(logging.Handler):
       self._started = True
     try:
       msg = self.format(record)
-      rc = self._mqttc.publish(
+      self._mqttc.publish(
           topic=self._topic,
           payload=msg,
           qos=self._qos,
           retain=self._retain)
+      self.flush()
     except Exception:
       self.handleError(record)
 
-  def initiate(self):
+  def loop_start(self):
     if not self._started:
       self._mqttc.loop_start()
       self._started = True
 
-  def terminate(self):
+  def loop_stop(self):
     try:
       self._mqttc.loop_stop()
     except:
       pass
-    try:
-      self._mqttc = None
-    except:
-      pass
+    finally:
+      self._started = False
 
   def max_inflight_messages_set(self, inflight):
     self._mqttc.max_inflight_messages_set(inflight)
