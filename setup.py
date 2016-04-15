@@ -5,7 +5,7 @@ import os
 import re
 
 with open(os.path.join('mqtthandler', 'version.py')) as f:
-  __version__ = re.sub(r"^.*'", '', re.sub(r"'$", '', f.readline().strip()))
+  exec(f.readline())
 
 setup(
   name='mqtthandler',
