@@ -14,7 +14,7 @@ setup(
   author='Chang Yu-heng',
   author_email='mr.changyuheng@gmail.com',
   url='https://github.com/changyuheng/MQTTHandler',
-  license='MIT',
+  license='MPL-2.0',
   packages=['mqtthandler'],
   install_requires=['paho-mqtt'],
 )
