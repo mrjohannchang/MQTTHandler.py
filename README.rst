@@ -1,5 +1,5 @@
-MQTTHandler
-===========
+MQTTHandler.py
+==============
 
 A Python logging handler using MQTT protocol.
 
